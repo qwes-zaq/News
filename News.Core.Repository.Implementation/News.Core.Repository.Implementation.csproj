@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\News.Core.Domain\News.Core.Domain.csproj" />
+    <ProjectReference Include="..\News.Core.Repository\News.Core.Repository.csproj" />
+  </ItemGroup>
+
+</Project>

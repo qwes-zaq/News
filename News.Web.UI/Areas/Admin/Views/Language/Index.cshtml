@@ -1,0 +1,35 @@
+﻿@model LanguagesVM
+
+<h1>Language List</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Language name
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var i in Model.LanguageList)
+        {
+        <tr>
+            <td>
+                @i.LanguageName
+            </td>
+            <td>
+                <a asp-action="Edit">Edit</a>
+            </td>
+            <td>
+            </td>
+
+        </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create">Create</a>

@@ -1,0 +1,19 @@
+﻿@model IEnumerable<PostVM>
+
+<h1>Index</h1>
+<div class="row row-cols-2">
+    @foreach (var i in Model)
+    {
+        <div class="col">
+            <div class="card m-5">
+                <a href="#">
+                    <img class="card-img-top" src=@i.PhotoPath alt="Card image cap">
+
+                    <div class="card-body">
+                        <h5 class="card-title">@i.PostTitle</h5>
+                       </div>
+                </a>
+            </div>
+        </div>
+    }
+</div>

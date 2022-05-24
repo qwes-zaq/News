@@ -1,0 +1,31 @@
+﻿@model CategoryEditListVM
+
+<h1>@ViewBag.Edit</h1>
+<form asp-action="Edit" method="post">
+
+    <input asp-for="@Model.CategoryId" type="hidden" />
+    <h3>Order Index</h3>
+    <input asp-for="@Model.OrderIndex" />
+
+    @for (int i = 0; i < Model.CategoryTranslationList.Count; i++)
+    {
+        <hr>
+        <h3>@Model.CategoryTranslationList[i].LanguageCode</h3>
+        <input asp-for="@Model.CategoryTranslationList[i].LanguageId" type="hidden" />
+        <input asp-for="@Model.CategoryTranslationList[i].LanguageCode" type="hidden" />
+        <br>
+
+        <h5>Slug</h5>
+        <input class="form-control" asp-for="@Model.CategoryTranslationList[i].Slug" />
+        <br>
+        <h5>Title</h5>
+        <input class="form-control" asp-for="@Model.CategoryTranslationList[i].Title" />
+        <br>
+        <h5>Description</h5>
+        <input class="form-control" asp-for="@Model.CategoryTranslationList[i].Description" />
+        <hr><hr>
+    }
+
+    <br>
+    <input type="submit" value="Edit" class="btn btn-primary" />
+</form>

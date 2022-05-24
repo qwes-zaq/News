@@ -1,0 +1,20 @@
+﻿@model LanguageCreateVm
+
+<h1>Create</h1>
+
+<h4>Language</h4>
+<hr />
+<form asp-action="Create" method="post">
+
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <label asp-for="@Model.LanguageName"></label><br />
+    <input class="form-control" asp-for="@Model.LanguageName" />
+    <span asp-validation-for="@Model.LanguageName"></span>
+
+    <label asp-for="@Model.LanguageCode"></label><br />
+    <input class="form-control" asp-for="@Model.LanguageCode" />
+    <span asp-validation-for="@Model.LanguageCode"></span>
+    <br>
+    <input type="submit" value="Create" class="btn btn-primary" />
+</form>

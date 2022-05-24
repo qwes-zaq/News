@@ -1,0 +1,23 @@
+﻿@model List<CategoryVM>
+
+<h1>Category List</h1>
+
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <th>Language</th>
+    </tr>
+    @foreach (var i in Model)
+    {
+        <tr>
+
+            <td>@i.CategoryName</td>
+            <td>@i.CategoryLanguage </td>
+
+            <td></td>
+
+            <td><a asp-action="Edit" asp-route-id="@i.CategoryId">Edit</a></td>
+        </tr>
+    }
+</table>
+<a asp-action="Create">Create</a>
