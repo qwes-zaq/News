@@ -9,22 +9,29 @@ using System.Threading.Tasks;
 
 namespace News.Web.UI.ViewComponents
 {
-    public class ShowDB : ViewComponent
+    public class CategoryList : ViewComponent
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public ShowDB(IUnitOfWork unitOfWork)
+        public CategoryList(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
 
         [Route("/[controller]/[action]/{language?}")]
+        [Route("/[controller]/[action]/{id?}/{language?}")]
         public async Task<IViewComponentResult> InvokeAsync(string language="En")
         {
-            List<CategoryVM> categoryList = new();// ;
-            Language currentLanguage = _unitOfWork.Languages?.Get(x => x.LanguageCode.ToLower() == language.ToLower());
-            int langId = currentLanguage?.Id ?? _unitOfWork.Languages.GetAll().FirstOrDefault().Id;
+            List<CategoryVM> categoryList = new();
+            //Language currentLanguage = _unitOfWork.Languages?.Get(x => x.LanguageCode.ToLower() == language.ToLower());
+            var tmp = _unitOfWork.Languages.GetAll();
+
+            Language currentLanguage = language != null ?
+                tmp.FirstOrDefault(x => x.LanguageCode.ToLower() == language.ToLower()) ?? tmp.First()
+                : tmp.First();
+
+            int langId = currentLanguage.Id ;
 
             var x = _unitOfWork.Categories.GetAllCategories();
 

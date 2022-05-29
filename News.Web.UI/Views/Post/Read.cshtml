@@ -1,0 +1,77 @@
+﻿@model PostReadVM
+
+
+<div class="single-news">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="sn-container">
+                    <div class="sn-img">
+                        <img src=@Model.PhotoPath alt="Card image cap">
+                    </div>
+                    <div class="sn-content">
+                        <h1>@Model.PostTitle</h1>
+
+                        @Html.Raw(@Model.PostBody)
+                        <p>
+                            @Model.AuthorName
+                            <hr>
+                            @Model.Date
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="sidebar">
+                    <div class="sidebar-widget">
+                        <h2 class="sw-title">In This Category</h2>
+                        <div class="news-list">
+                            @foreach (var i in Model.PostList)
+                            {
+                                <a asp-action="Read" asp-route-Id="@i.PostId" asp-route-language="">
+                                    <div class="nl-item">
+                                        <div class="nl-img">
+                                            <img src=@i.PhotoPath />
+                                        </div>
+                                        <div class="nl-title">
+                                            <a href="">@i.PostTitle</a>
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+
+
+                    <div class="sidebar-widget">
+                        <h2 class="sw-title">Tags Cloud</h2>
+                        <div class="tags">
+                            <a href="">National</a>
+                            <a href="">International</a>
+                            <a href="">Economics</a>
+                            <a href="">Politics</a>
+                            <a href="">Lifestyle</a>
+                            <a href="">Technology</a>
+                            <a href="">Trades</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*<img class="card-img-top" src=@Model.PhotoPath alt="Card image cap">
+
+    <div class="card-body">
+        <h5 class="card-title">@Model.PostTitle</h5>
+        @Html.Raw(@Model.PostBody)
+        <p>
+            @Model.AuthorName
+            <hr>
+            @Model.Date
+        </p>
+    </div>*@

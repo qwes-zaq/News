@@ -12,7 +12,7 @@ namespace News.Web.UI.Areas.Admin.Models.ViewModels.PostVMs
         public IEnumerable<SelectListItem> CategoryList { get; set; }
         public int CategoryId { get; set; }
 
-        [PostTranslationList]
+        //[PostTranslationList]
         public List<PostTranslationVM> PostTranslationList { get; set; }
     }
 

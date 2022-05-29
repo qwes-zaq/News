@@ -21,13 +21,17 @@ namespace News.Core.Repository.Implementation.Persistence
         public NewsDbContext NewsDbContext => _db as NewsDbContext;
 
         // public NewsDbContext NewsDbContext => _db; //?
-        public IQueryable<Category> GetAllCategories() 
-        {
-            return _dbSet
+        public IQueryable<Category> GetAllCategories() =>
+            _dbSet
             .Include(x => x.CategoryTranslations)
             .ThenInclude(t => t.Language);
-        }
-        public Category FindById(int id) => _dbSet.FirstOrDefault(x => x.Id == id);
+
+        public Category FindById(int id) 
+            => _dbSet
+            .Include(x => x.CategoryTranslations)
+            .Include(x=> x.Posts)
+                .ThenInclude(x=>x.PostTranslations)
+            .FirstOrDefault(x => x.Id == id);
 
 
         public IEnumerable<Category> GetMany(Expression<Func<Category, bool>> predicate)   //return all categories where predicate is true

@@ -3,9 +3,6 @@
 <head>
     <meta charset="utf-8">
     <title>News Site</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Bootstrap News Template - Free HTML Templates" name="keywords">
-    <meta content="Bootstrap News Template - Free HTML Templates" name="description">
 
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
@@ -25,7 +22,7 @@
 
 <body>
     <!-- Top Bar Start -->
-    <div class="top-bar">
+    <!--<div class="top-bar">
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
@@ -44,7 +41,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>-->
     <!-- Top Bar Start -->
     <!-- Brand Start -->
     <div class="brand">
@@ -57,14 +54,14 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-4">
-                    <div class="b-ads">
+                <div class="col-lg-4 col-md-4">
+                    @*<div class="b-ads">
                         <a href="https://htmlcodex.com">
                             <img src="~/ui/img/ads-1.jpg" alt="Ads">
                         </a>
-                    </div>
+                    </div>*@
                 </div>
-                <div class="col-lg-3 col-md-4">
+                <div class="col-lg-5 col-md-4">
                     <div class="b-search">
                         <input type="text" placeholder="Search">
                         <button><i class="fa fa-search"></i></button>
@@ -103,7 +100,8 @@
 
                         @*@Html.RenderAction()*@
                         @*@UrlHelperExtensions.Action(, "Category");*@
-                        @await Component.InvokeAsync("ShowDB")
+
+                        @await Component.InvokeAsync("CategoryList")
 
                     </div>
 
@@ -214,21 +212,6 @@
         </div>
     </div>
     <!-- Footer Menu End -->
-    <!-- Footer Bottom Start -->
-    <div class="footer-bottom">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 copyright">
-                    <p>Copyright &copy; <a href="https://htmlcodex.com">HTML Codex</a>. All Rights Reserved</p>
-                </div>
-
-                <div class="col-md-6 template-by">
-                    <p>Template By <a href="https://htmlcodex.com">HTML Codex</a></p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Footer Bottom End -->
     <!-- Back to Top -->
     <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 

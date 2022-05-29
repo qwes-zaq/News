@@ -79,15 +79,26 @@ namespace News.Web.UI
 
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapDefaultControllerRoute();
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Card}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
+                //endpoints.MapControllerRoute(
+                //    name: "default",
+                //    pattern: "{controller=Card}/{action=Index}/{id?}");
+
+                //endpoints.MapControllerRoute(
+                //    name: "Posts",
+                //    pattern: "{controller}/{action}/{categoryId}/{language?}");
+
+                //endpoints.MapControllerRoute(
+                //    name: "PostRead",
+                //    pattern: "{controller}/{action}/{postId}/{language?}");
+
 
                 endpoints.MapControllerRoute(
                     name: "Posts",
-                    pattern: "{controller}/{action}/{categoryId}/{language?}");
+                    pattern: "{controller}/{action}/{id}/{language?}");
 
+
+                //Admin
                 endpoints.MapControllerRoute(
                     name: "MyArea",
                     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");

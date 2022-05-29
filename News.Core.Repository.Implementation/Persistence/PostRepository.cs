@@ -39,6 +39,8 @@ namespace News.Core.Repository.Implementation.Persistence
         public Post FindById(int id) 
             => _dbSet
                 .Include(x=>x.PostTranslations)
+                .Include(x => x.UpdatedUser)
+                .Include(x => x.AddedBy)
                 .Include(x=>x.Category)
                     .ThenInclude(x=> x.CategoryTranslations)
                 .FirstOrDefault(x => x.Id == id);
