@@ -14,5 +14,6 @@ namespace News.Web.UI.Areas.Admin.Models.ViewModels.PostVMs
         public int CategoryId { get; set; }
         public string SelectedCategory { get; set; }
         public List<PostTranslationVM> PostTranslationList { get; set; }
+        public string Tags { get; set; }
     }
 }

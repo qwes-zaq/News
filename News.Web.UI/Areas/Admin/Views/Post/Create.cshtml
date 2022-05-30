@@ -23,7 +23,6 @@
     <input type="hidden" asp-for="@Model.CategoryList" />
     <hr>
 
-    @*<div class="col-12 col-sm-6">*@
     <div class="card card-primary card-outline card-outline-tabs">
         <div class="card-header p-0 border-bottom-0">
 
@@ -79,6 +78,10 @@
         </div>
     </div>
 
+
+
+    <p>Tags</p>
+    <input class="form-control" asp-for="@Model.Tags">
     <br>
     <input type="submit" value="Create" class="btn btn-primary" />
 </form>

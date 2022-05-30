@@ -1,4 +1,5 @@
-﻿using System;
+﻿using News.Web.UI.Models.ViewModels.TagVMs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace News.Web.UI.Models.ViewModels.PostVMs
         public string AuthorName { get; set; }
         public DateTime Date { get; set; }
 
+        public List<TagVM> TagList { get; set; }
         public List<PostVM> PostList { get; set; }
     }
 }

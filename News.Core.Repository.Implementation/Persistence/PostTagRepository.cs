@@ -24,9 +24,12 @@ namespace News.Core.Repository.Implementation.Persistence
 
         public PostTag FindById(int postId, int tagId) => _dbSet.FirstOrDefault(x => x.TagId == tagId && x.PostId == postId);
 
-        public IQueryable<PostTag> FindWithPosts(Expression<Func<PostTag, bool>> predicate) => _dbSet.Include(x => x.Post);
 
-        public IQueryable<PostTag> FindWithTags(Expression<Func<PostTag, bool>> predicate) => _dbSet.Include(x => x.Tag);
+        public IQueryable<PostTag> FindFull(Expression<Func<PostTag, bool>> predicate) 
+            => _dbSet
+                .Include(x => x.Tag)
+                .Include(x=>x.Post)
+                    .ThenInclude(x=>x.PostTranslations);
 
         public new IQueryable<PostTag> Find(Expression<Func<PostTag, bool>> predicate) => _dbSet.Include(x=>x.Post).Include(x=>x.Tag).Where(predicate);
     }

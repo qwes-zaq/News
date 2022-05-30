@@ -12,7 +12,6 @@ namespace News.Core.Repository.Implementation.Repositories
     public interface IPostTagRepository : IRepository<PostTag>
     {
         public PostTag FindById(int postId, int tagId);
-        public IQueryable<PostTag> FindWithPosts(Expression<Func<PostTag, bool>> predicate);
-        public IQueryable<PostTag> FindWithTags(Expression<Func<PostTag, bool>> predicate);
+        public IQueryable<PostTag> FindFull(Expression<Func<PostTag, bool>> predicate);
     }
 }

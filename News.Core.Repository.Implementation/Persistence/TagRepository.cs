@@ -21,6 +21,11 @@ namespace News.Core.Repository.Implementation.Persistence
 
         public NewsDbContext NewsDbContext => _db as NewsDbContext;
 
-        public Tag FindById(int id) => _dbSet.FirstOrDefault(x => x.Id == id);
+        public Tag FindById(int id) 
+            => _dbSet
+                .Include(x=>x.PostTags)
+                    .ThenInclude(x=>x.Post)
+                        .ThenInclude(x=>x.PostTranslations)
+            .FirstOrDefault(x => x.Id == id);
     }
 }

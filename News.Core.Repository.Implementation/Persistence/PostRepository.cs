@@ -43,6 +43,8 @@ namespace News.Core.Repository.Implementation.Persistence
                 .Include(x => x.AddedBy)
                 .Include(x=>x.Category)
                     .ThenInclude(x=> x.CategoryTranslations)
+                .Include(x=>x.PostTags)
+                    .ThenInclude(x=>x.Tag)
                 .FirstOrDefault(x => x.Id == id);
 
         public IQueryable<Post> FindForIndex(Expression<Func<Post, bool>> predicate, int count) => _dbSet.Where(predicate).Take(count);

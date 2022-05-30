@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using News.Web.UI.Models.ViewModels.PostVMs;
+using System.Globalization;
 
 namespace News.Web.UI.Controllers
 {
@@ -99,33 +100,48 @@ namespace News.Web.UI.Controllers
                 AuthorName = currentPost.UpdatedUser.UserName,
                 Date = currentPost.AddedDate,
                 PhotoPath = "/ui/img/news-450x350-2.jpg",
-                PostList = new()
+                PostList = new(),
+                TagList = new()
             };
 
-            var list = currentCategory.Posts                
-                .Where(x=>x.Status == (int)Core.Domain.Enums.Status.Active)
+
+            foreach (var i in currentPost.PostTags)
+            {
+                postReadVM.TagList.Add(new()
+                {
+                    TagTitle = ToTitleCase(i.Tag.Title),
+                    TagId = i.TagId
+                });
+            }
+            var list = currentCategory.Posts
+                .Where(x => x.Status == (int)Core.Domain.Enums.Status.Active)
                 .OrderBy(x => x.AddedDate)
                 .Reverse()
                 .Take(6)
-                .ToList()
-                ;
+                .ToList();
 
             if (!list.Remove(currentPost))
             {
-                list.Remove(list.First());    
+                list.Remove(list.First());
             }
-            foreach(var i in list)
-            {
-                    postReadVM.PostList.Add(new()
-                    {
-                        PostId = i.Id,
-                        PostTitle = i.PostTranslations.FirstOrDefault(x => x.LanguageId == currentLanguage.Id).Title,
-                        PhotoPath = "/ui/img/news-450x350-2.jpg"
 
-                    });
+            foreach (var i in list)
+            {
+                postReadVM.PostList.Add(new()
+                {
+                    PostId = i.Id,
+                    PostTitle = i.PostTranslations.FirstOrDefault(x => x.LanguageId == currentLanguage.Id).Title,
+                    PhotoPath = "/ui/img/news-450x350-2.jpg"
+
+                });
             }
 
             return View(postReadVM);
+        }
+
+        public static string ToTitleCase(string title)
+        {
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(title.ToLower());
         }
     }
 }

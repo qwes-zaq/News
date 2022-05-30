@@ -90,6 +90,7 @@ namespace News.Web.UI.Areas.Admin.Controllers
                     CategoryId = model.CategoryId
                 };
 
+                //Translation adding
                 foreach (var i in model.PostTranslationList)
                 {
                     if (i.Title != null)
@@ -108,6 +109,38 @@ namespace News.Web.UI.Areas.Admin.Controllers
                         });
                     }
                 }
+
+                //Tags adding
+                List<string> tagList = model.Tags.ToLower().Split(", ").ToList();
+                
+                for (int i = 0; i < tagList.Count; i++)
+                {
+                    
+                    if (!_unitOfWork.Tags.GetAny(x => x.Title == tagList[i]))
+                    {
+                        _unitOfWork.Tags.Add(new() { 
+                            AddedBy=currentUser,
+                            UpdatedUser=currentUser,
+                            AddedDate = DateTime.Now,
+                            UpdateDate = DateTime.Now,
+                            Title= tagList[i],
+                            Status = (int)Core.Domain.Enums.Status.Active
+                        });
+
+                    }
+                }
+                _unitOfWork.Complete();
+
+                foreach (var i in tagList)
+                {
+                    Tag currentTag = _unitOfWork.Tags.Get(x=>x.Title==i);
+
+                    _unitOfWork.PostTags.Add(new() { 
+                        Post=post,
+                        Tag=currentTag
+                    });
+                }
+
                 //using (var transaction = _unitOfWork.Context.Database.BeginTransaction()) //?
                 //{
                 //try
@@ -164,6 +197,7 @@ namespace News.Web.UI.Areas.Admin.Controllers
                 SelectedCategory = categoryTranslation.Title
             };
 
+            //Translations
             foreach (var i in languages)
             {
                 var tmp = post.PostTranslations.FirstOrDefault(x => x.LanguageId == i.Id);
@@ -175,6 +209,18 @@ namespace News.Web.UI.Areas.Admin.Controllers
                     LanguageCode = i.LanguageCode,
                     Body = tmp?.Body
                 });
+            }
+
+
+            //Tags
+            foreach (var i in post.PostTags)
+            {
+                postEditVM.Tags += i.Tag.Title + ", ";
+            }
+
+            if (postEditVM.Tags != null)
+            {
+                postEditVM.Tags = postEditVM.Tags[0..^2]; // Deleting last ", "
             }
 
             postEditVM.CategoryList = _unitOfWork.Categories.GetAll()
@@ -197,6 +243,7 @@ namespace News.Web.UI.Areas.Admin.Controllers
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
                 post.Category = _unitOfWork.Categories.FindById(model.CategoryId);
 
+                //Translation edit
                 foreach (var i in model.PostTranslationList)
                 {
                     PostTranslation tmp = post.PostTranslations.FirstOrDefault(x => x.LanguageId == i.LanguageId);
@@ -204,7 +251,6 @@ namespace News.Web.UI.Areas.Admin.Controllers
                     {
                         tmp = new()
                         {
-
                             Post = post,
                             AddedBy = currentUser,
                             AddedDate = DateTime.Now,
@@ -223,6 +269,74 @@ namespace News.Web.UI.Areas.Admin.Controllers
                     post.PostTranslations.Add(tmp);
                 }
 
+                //Tags edit
+                List<string> oldTags = new();
+                                       //post.PostTags.Select(x => x.Tag.Title).ToList();  
+                List<string> newTags = model.Tags.ToLower().Split(", ").ToList();
+                List<string> tmpTags = new();
+
+
+                foreach (var i in post.PostTags)
+                {
+                    oldTags.Add(i.Tag.Title);
+                }
+
+                //Tag1, Tag2, Tag3   --- oldTags  
+                //Tag1, Tag2, Tag4   --- newTags
+                //Tag1, Tag2         --- tmpTags
+
+                foreach (var i in oldTags)
+                {
+                    if (newTags.Contains(i))
+                    {
+                        tmpTags.Add(i);
+                    }
+                }
+
+                foreach (var i in tmpTags)
+                { 
+                    newTags.Remove(i);
+                    oldTags.Remove(i);
+                }
+
+
+                //Deleting old tags
+                foreach (var i in oldTags)
+                {
+                    var tmpTag = _unitOfWork.Tags.Get(x => x.Title == i);
+                    _unitOfWork.PostTags.Remove(_unitOfWork.PostTags.FindById (post.Id,tmpTag.Id));
+                }
+
+                //Adding new tags
+                for (int i = 0; i < newTags.Count; i++)
+                {
+
+                    if (!_unitOfWork.Tags.GetAny(x => x.Title == newTags[i]))
+                    {
+                        _unitOfWork.Tags.Add(new()
+                        {
+                            AddedBy = currentUser,
+                            UpdatedUser = currentUser,
+                            AddedDate = DateTime.Now,
+                            UpdateDate = DateTime.Now,
+                            Title = newTags[i],
+                            Status = (int)Core.Domain.Enums.Status.Active
+                        });
+
+                    }
+                }
+                _unitOfWork.Complete();
+
+                foreach (var i in newTags)
+                {
+                    Tag currentTag = _unitOfWork.Tags.Get(x => x.Title == i);
+
+                    _unitOfWork.PostTags.Add(new()
+                    {
+                        Post = post,
+                        Tag = currentTag
+                    });
+                }
                 //using (var transaction = _unitOfWork.Context.Database.BeginTransaction()) //?
                 //{
                 //    try

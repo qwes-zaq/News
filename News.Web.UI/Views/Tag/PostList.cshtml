@@ -1,0 +1,20 @@
+﻿@model TagPostsVM
+
+<h1>@Model.TagTitle</h1>
+<div class="row row-cols-2">
+    @foreach (var i in Model.PostList)
+    {
+        <a asp-action="Read" asp-route-Id="@i.PostId" asp-route-language="">
+            <div class="col">
+                <div class="card m-5">
+                    <img class="card-img-top" src=@i.PhotoPath alt="Card image cap">
+
+                    <div class="card-body">
+                        <h5 class="card-title">@i.PostTitle</h5>
+                    </div>
+
+                </div>
+            </div>
+        </a>
+    }
+</div>
