@@ -79,10 +79,10 @@ namespace News.Web.UI
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
-                //endpoints.MapControllerRoute(
-                //    name: "default",
-                //    pattern: "{controller=Card}/{action=Index}/{id?}");
+                //endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{language?}");
 
                 //endpoints.MapControllerRoute(
                 //    name: "Posts",

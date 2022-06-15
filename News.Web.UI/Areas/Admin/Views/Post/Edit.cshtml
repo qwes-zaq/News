@@ -13,7 +13,7 @@
 <hr>
 <h6>@ViewBag.Info</h6>
 <hr>
-<form asp-action="Edit" method="post">
+<form asp-action="Edit" enctype="multipart/form-data" method="post">
 
     <div asp-validation-summary="ModelOnly"></div>
 
@@ -25,7 +25,13 @@
     <input type="hidden" asp-for="@Model.CategoryList" />
     <hr>
 
-    @*<div class="col-12 col-sm-6">*@
+    @if (@Model.OldPostImpPath != null)
+    {
+        <img src="@Model.OldPostImpPath" />
+    }
+
+    <input type="file" asp-for="@Model.NewPostImg">
+    <hr>
     <div class="card card-primary card-outline card-outline-tabs">
         <div class="card-header p-0 border-bottom-0">
 
@@ -67,11 +73,12 @@
 
                         <input asp-for="@Model.PostTranslationList[i].LanguageId" type="hidden" />
                         <input asp-for="@Model.PostTranslationList[i].LanguageCode" type="hidden" />
+
                         <label asp-for="@Model.PostTranslationList[i].Title"></label><br />
                         <input class="form-control" asp-for="@Model.PostTranslationList[i].Title" />
 
                         <label asp-for="@Model.PostTranslationList[i].Body"></label><br />
-                        <input class="form-control summernote" asp-for="@Model.PostTranslationList[i].Body">
+                        <textarea class="form-control summernote" asp-for="@Model.PostTranslationList[i].Body"></textarea>
 
                         <label asp-for="@Model.PostTranslationList[i].ShortDescription"></label><br />
                         <input class="form-control" asp-for="@Model.PostTranslationList[i].ShortDescription" />

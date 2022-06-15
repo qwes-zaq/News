@@ -21,9 +21,27 @@ namespace News.Core.Repository.Implementation.Persistence
 
         public IQueryable<Post> GetAllPosts()
         {
-            return _dbSet.Include(x=>x.Post).Select(x=>x.Post);
+            //return _db.Posts
+            //    .Include(x=>x.PinnedPost)
+            //    .Include(x => x.PostTranslations)
+            //    .Include(x => x.Category)
+            //           .ThenInclude(x => x.CategoryTranslations)
+            //     .Where(x=>x.PinnedPost!=null);
+            return _dbSet
+                .Include(x => x.Post)
+                    .ThenInclude(x => x.PostTranslations)
+                .Include(x => x.Post)
+                    .ThenInclude(x => x.Category)
+                        .ThenInclude(x => x.CategoryTranslations)
+                .Select(x => x.Post);
         }
 
-
+        public IQueryable<Post> GetAllPostsWithTranslations()
+        {
+            return _dbSet
+                .Include(x => x.Post)
+                    .ThenInclude(x => x.PostTranslations)
+                .Select(x => x.Post);
+        }
     }
 }

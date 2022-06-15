@@ -12,5 +12,6 @@ namespace News.Core.Repository.Implementation.Repositories
     {
         PinnedPost FindById(int id);
         IQueryable<Post> GetAllPosts();
+        IQueryable<Post> GetAllPostsWithTranslations();
     }
 }

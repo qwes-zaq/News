@@ -83,16 +83,7 @@
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto">
                         <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-item nav-link">Home</a>
-
-                        <a asp-controller="Card" asp-action="Index" class="nav-item nav-link">Card</a>
-
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Dropdown</a>
-                            <div class="dropdown-menu">
-                                <a asp-controller="Card" asp-action="Index" class="dropdown-item">Card</a>
-                                <a href="#" class="dropdown-item">Sub Item 2</a>
-                            </div>
-                        </div>
+                        
                         @if (!User.Identity.IsAuthenticated)
                         {
                             <a class="nav-item nav-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>

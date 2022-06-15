@@ -77,13 +77,13 @@
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                     <!-- Add icons to the links using the .nav-icon class
-                    with font-awesome or any other icon font library -->
+    with font-awesome or any other icon font library -->
                     <!-- menu-open -->
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>
-                                News
+                                Post
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
@@ -98,6 +98,23 @@
                                 <a asp-area="Admin" asp-controller="Post" asp-action="Create" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p> Create</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>
+                                Pinned post
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a asp-area="Admin" asp-controller="PinnedPost" asp-action="Index" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>List</p>
                                 </a>
                             </li>
                         </ul>

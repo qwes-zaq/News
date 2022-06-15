@@ -9,6 +9,7 @@ namespace News.Web.UI.Models.ViewModels.PostVMs
     public class PostReadVM
     {
         public int PostId { get; set; }
+        public int ViewCount { get; set; }
         public string PostTitle { get; set; }
         public string PostBody { get; set; }
         public string PhotoPath { get; set; }

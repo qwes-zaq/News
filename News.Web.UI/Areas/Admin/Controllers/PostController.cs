@@ -8,6 +8,7 @@ using News.Core.UnitOfWork.Core;
 using News.Web.UI.Areas.Admin.Models.ViewModels.PostVMs;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -35,7 +36,7 @@ namespace News.Web.UI.Areas.Admin.Controllers
             
             foreach (var i in _unitOfWork.Posts.GetAll(x => x.Status == (int)Core.Domain.Enums.Status.Active))
             {
-                PostTranslation postTranslation = i.PostTranslations.First();
+                PostTranslation postTranslation = i.PostTranslations.First(x=>x.Title!=null);
                 Language language = postTranslation.Language;
                 CategoryTranslation categoryTranslation = i.Category.CategoryTranslations.First(x => x.LanguageId == language.Id);
                 postVMs.Add(new PostVM()
@@ -111,36 +112,56 @@ namespace News.Web.UI.Areas.Admin.Controllers
                 }
 
                 //Tags adding
-                List<string> tagList = model.Tags.ToLower().Split(", ").ToList();
-                
-                for (int i = 0; i < tagList.Count; i++)
+                if (model.Tags != null)
                 {
-                    
-                    if (!_unitOfWork.Tags.GetAny(x => x.Title == tagList[i]))
-                    {
-                        _unitOfWork.Tags.Add(new() { 
-                            AddedBy=currentUser,
-                            UpdatedUser=currentUser,
-                            AddedDate = DateTime.Now,
-                            UpdateDate = DateTime.Now,
-                            Title= tagList[i],
-                            Status = (int)Core.Domain.Enums.Status.Active
-                        });
+                    List<string> tagList = model.Tags.ToLower().Split(", ").ToList();
 
+                    for (int i = 0; i < tagList.Count; i++)
+                    {
+
+                        if (!_unitOfWork.Tags.GetAny(x => x.Title == tagList[i]))
+                        {
+                            _unitOfWork.Tags.Add(new()
+                            {
+                                AddedBy = currentUser,
+                                UpdatedUser = currentUser,
+                                AddedDate = DateTime.Now,
+                                UpdateDate = DateTime.Now,
+                                Title = tagList[i],
+                                Status = (int)Core.Domain.Enums.Status.Active
+                            });
+
+                        }
+                    }
+                    _unitOfWork.Complete();
+
+                    foreach (var i in tagList)
+                    {
+                        Tag currentTag = _unitOfWork.Tags.Get(x => x.Title == i);
+
+                        _unitOfWork.PostTags.Add(new()
+                        {
+                            Post = post,
+                            Tag = currentTag
+                        });
+                    }
+
+                }
+                //Img adding
+
+                if (model.PostImg != null)
+                {
+                    string uploadsFolder = Path.Combine(_environment.WebRootPath, "uploadedFiles");
+                    string ImagePath = Guid.NewGuid().ToString() + "_" + model.PostImg.FileName;
+                    string filePath = Path.Combine(uploadsFolder, ImagePath);
+                    using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.PostImg.CopyToAsync(fs);
+                        post.PhotoPath = "/uploadedFiles/" + ImagePath;
                     }
                 }
-                _unitOfWork.Complete();
 
-                foreach (var i in tagList)
-                {
-                    Tag currentTag = _unitOfWork.Tags.Get(x=>x.Title==i);
-
-                    _unitOfWork.PostTags.Add(new() { 
-                        Post=post,
-                        Tag=currentTag
-                    });
-                }
-
+                
                 //using (var transaction = _unitOfWork.Context.Database.BeginTransaction()) //?
                 //{
                 //try
@@ -194,7 +215,8 @@ namespace News.Web.UI.Areas.Admin.Controllers
                 LangInUrl = language,
                 CategoryId = post.CategoryId,
                 PostTranslationList = new(),
-                SelectedCategory = categoryTranslation.Title
+                SelectedCategory = categoryTranslation.Title,
+                OldPostImpPath=post.PhotoPath
             };
 
             //Translations
@@ -222,6 +244,8 @@ namespace News.Web.UI.Areas.Admin.Controllers
             {
                 postEditVM.Tags = postEditVM.Tags[0..^2]; // Deleting last ", "
             }
+
+
 
             postEditVM.CategoryList = _unitOfWork.Categories.GetAll()
                 .Select(x => new SelectListItem()
@@ -272,7 +296,7 @@ namespace News.Web.UI.Areas.Admin.Controllers
                 //Tags edit
                 List<string> oldTags = new();
                                        //post.PostTags.Select(x => x.Tag.Title).ToList();  
-                List<string> newTags = model.Tags.ToLower().Split(", ").ToList();
+                List<string> newTags = model.Tags?.ToLower()?.Split(", ")?.ToList();
                 List<string> tmpTags = new();
 
 
@@ -285,11 +309,14 @@ namespace News.Web.UI.Areas.Admin.Controllers
                 //Tag1, Tag2, Tag4   --- newTags
                 //Tag1, Tag2         --- tmpTags
 
-                foreach (var i in oldTags)
+                if (newTags != null)
                 {
-                    if (newTags.Contains(i))
+                    foreach (var i in oldTags)
                     {
-                        tmpTags.Add(i);
+                        if (newTags.Contains(i))
+                        {
+                            tmpTags.Add(i);
+                        }
                     }
                 }
 
@@ -308,7 +335,7 @@ namespace News.Web.UI.Areas.Admin.Controllers
                 }
 
                 //Adding new tags
-                for (int i = 0; i < newTags.Count; i++)
+                for (int i = 0; i < (newTags?.Count ?? 0); i++)
                 {
 
                     if (!_unitOfWork.Tags.GetAny(x => x.Title == newTags[i]))
@@ -326,17 +353,34 @@ namespace News.Web.UI.Areas.Admin.Controllers
                     }
                 }
                 _unitOfWork.Complete();
-
-                foreach (var i in newTags)
+                if (newTags != null)
                 {
-                    Tag currentTag = _unitOfWork.Tags.Get(x => x.Title == i);
-
-                    _unitOfWork.PostTags.Add(new()
+                    foreach (var i in newTags)
                     {
-                        Post = post,
-                        Tag = currentTag
-                    });
+                        Tag currentTag = _unitOfWork.Tags.Get(x => x.Title == i);
+
+                        _unitOfWork.PostTags.Add(new()
+                        {
+                            Post = post,
+                            Tag = currentTag
+                        });
+                    }
                 }
+
+                //Img edit
+                if (model.NewPostImg != null)
+                {
+                    string uploadsFolder = Path.Combine(_environment.WebRootPath, "uploadedFiles");
+                    string ImagePath = Guid.NewGuid().ToString() + "_" + model.NewPostImg.FileName;
+                    string filePath = Path.Combine(uploadsFolder, ImagePath);
+                    using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.NewPostImg.CopyToAsync(fs);
+                        post.PhotoPath = "/uploadedFiles/" + ImagePath;
+                    }
+                }
+
+
                 //using (var transaction = _unitOfWork.Context.Database.BeginTransaction()) //?
                 //{
                 //    try

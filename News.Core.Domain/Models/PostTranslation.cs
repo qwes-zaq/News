@@ -25,7 +25,7 @@ namespace News.Core.Domain.Models
         public string TitleType { get; set; }
         public string ShortDescription { get; set; }
         public string Body { get; set; }
-        public int ViewCount { get; set; }
+        public int ViewCount { get; set; } 
         public int ReadTime { get; set; }
     }
 }

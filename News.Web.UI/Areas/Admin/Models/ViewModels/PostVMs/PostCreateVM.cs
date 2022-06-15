@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using News.Web.UI.Areas.Admin.Models.Attributes;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,10 @@ namespace News.Web.UI.Areas.Admin.Models.ViewModels.PostVMs
 
         public string Tags { get; set; }
 
-        //[PostTranslationList]
+        [PostTranslationList]
         public List<PostTranslationVM> PostTranslationList { get; set; }
+        public IFormFile PostImg { get; set; }
+
     }
 
 

@@ -55,7 +55,7 @@ namespace News.Web.UI.Controllers
                         PostId = i.Id,
                         PostTitle = i.PostTranslations.FirstOrDefault(x => x.LanguageId == currentLanguage.Id).Title,
                         //PostBody= i.PostTranslations.FirstOrDefault(x => x.LanguageId == currentLanguage.Id).Body,
-                        PhotoPath = "/ui/img/news-450x350-2.jpg"
+                        PhotoPath = i.PhotoPath ?? "/ui/img/news-450x350-2.jpg"
 
                     });
 
@@ -71,11 +71,11 @@ namespace News.Web.UI.Controllers
         {
             int postId = id;
             Post currentPost = _unitOfWork.Posts.FindById(postId);
+
             if (currentPost == null || currentPost.Status != (int)Core.Domain.Enums.Status.Active)
             {
                 return RedirectToAction("Index", "Home", new { @language = language });
             }
-
 
             var tmp = _unitOfWork.Languages.GetAll();
 
@@ -84,6 +84,7 @@ namespace News.Web.UI.Controllers
                 : tmp.First();
 
             Category currentCategory = _unitOfWork.Categories.FindById(currentPost.CategoryId);
+            
             PostTranslation currentPostTranslation = currentPost
                .PostTranslations
                .FirstOrDefault(x => x.LanguageId == currentLanguage.Id);
@@ -99,7 +100,8 @@ namespace News.Web.UI.Controllers
                 PostTitle = currentPostTranslation.Title,
                 AuthorName = currentPost.UpdatedUser.UserName,
                 Date = currentPost.AddedDate,
-                PhotoPath = "/ui/img/news-450x350-2.jpg",
+                PhotoPath = currentPost.PhotoPath ?? "/ui/img/news-450x350-2.jpg",
+                ViewCount=currentPostTranslation.ViewCount,
                 PostList = new(),
                 TagList = new()
             };
@@ -131,10 +133,15 @@ namespace News.Web.UI.Controllers
                 {
                     PostId = i.Id,
                     PostTitle = i.PostTranslations.FirstOrDefault(x => x.LanguageId == currentLanguage.Id).Title,
-                    PhotoPath = "/ui/img/news-450x350-2.jpg"
+                    PhotoPath = i.PhotoPath ?? "/ui/img/news-450x350-2.jpg",
 
                 });
             }
+
+
+            currentPostTranslation.ViewCount++;
+            _unitOfWork.PostTranslations.Update(currentPostTranslation);
+            _unitOfWork.Complete();
 
             return View(postReadVM);
         }

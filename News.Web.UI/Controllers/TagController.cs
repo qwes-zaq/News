@@ -55,7 +55,7 @@ namespace News.Web.UI.Controllers
                     {
                         PostId = i.PostId,
                         PostTitle = currentPostTranslation.Title,
-                        PhotoPath="/ui/img/news-450x350-2.jpg"
+                        PhotoPath = i.Post.PhotoPath ?? "/ui/img/news-450x350-2.jpg"
                     });
                 }
             }

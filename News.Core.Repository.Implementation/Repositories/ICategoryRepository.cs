@@ -13,6 +13,7 @@ namespace News.Core.Repository.Implementation.Repositories
     {
 
         public IQueryable<Category> GetAllCategories();
+        public IQueryable<Category> GetFullAllCategories();
         public IQueryable<Category> FindWithPosts(Expression<Func<Category, bool>> predicate);
         public IQueryable<Category> GetAll(Expression<Func<Category, bool>> predicate);
         public Category FindById(int id);

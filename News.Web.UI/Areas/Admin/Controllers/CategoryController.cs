@@ -32,7 +32,7 @@ namespace News.Web.UI.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            List<CategoryVM> categoryVMs = new List<CategoryVM>() { };
+            List<CategoryVM> categoryVMs = new() { };
 
 
             foreach (var z in _unitOfWork.Categories.Find(x => true))///// GetAll

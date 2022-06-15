@@ -26,6 +26,12 @@ namespace News.Core.Repository.Implementation.Persistence
             .Include(x => x.CategoryTranslations)
             .ThenInclude(t => t.Language);
 
+        public IQueryable<Category> GetFullAllCategories() =>
+            _dbSet
+            .Include(x => x.CategoryTranslations)
+            .Include(x => x.Posts)
+                .ThenInclude(x => x.PostTranslations);
+
         public Category FindById(int id) 
             => _dbSet
             .Include(x => x.CategoryTranslations)

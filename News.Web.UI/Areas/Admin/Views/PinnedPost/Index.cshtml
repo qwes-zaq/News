@@ -1,0 +1,59 @@
+﻿@model PostListVM
+
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <th>Category</th>
+
+    </tr>
+
+    @foreach (var i in Model.PinnedPostList)
+    {
+        <tr>
+            <td>@i.PostTitle</td>
+            <td>@i.CategoryName</td>
+            <td>@i.PostId</td>
+
+
+            <td>
+                <form asp-area="Admin" asp-controller="PinnedPost" asp-action="UnPin" method="post">
+
+
+                    <input type="hidden" name="postId" value="@i.PostId" />
+                    <input type="submit" value="Unpin" class="btn btn-danger" />
+
+                </form>
+                <!--<form action="@Url.Action("UnPin", "PinnedPost")/@i.PostId" method="post">-->
+                    @*<input type="hidden" asp-for="@i.PostId" />*@
+                    <!--<input type="submit" value="Unpin" class="btn btn-danger" />
+
+                </form>-->
+            </td>
+        </tr>
+    }
+
+    @foreach (var i in Model.PostList)
+    {
+        <tr>
+            <td>@i.PostTitle</td>
+            <td>@i.CategoryName</td>
+            <td>@i.PostId</td>
+
+            <td>
+                <form asp-area="Admin" asp-controller="PinnedPost" asp-action="Pin" method="post">
+
+
+                    <input type="hidden" name="postId" value="@i.PostId" />
+                    <input type="submit" value="Pin" class="btn btn-primary" />
+
+                 </form>
+                    
+                @*<form action="@Url.Action("Pin", "PinnedPost")/@i.PostId" method="post">
+
+                    <input type="submit" value="Pin" class="btn btn-primary" />
+
+                </form>*@
+            </td>
+        </tr>
+    }
+</table>

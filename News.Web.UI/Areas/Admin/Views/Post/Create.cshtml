@@ -11,7 +11,7 @@
 <hr>
 <h6>@ViewBag.Info</h6>
 <hr>
-<form asp-action="Create" method="post">
+<form asp-action="Create" enctype="multipart/form-data" method="post">
 
     <div asp-validation-summary="ModelOnly"></div>
 
@@ -20,7 +20,10 @@
     <hr>
     <span asp-validation-for="@Model.PostTranslationList"></span>
 
-    <input type="hidden" asp-for="@Model.CategoryList" />
+    <input class="form-control" type="hidden" asp-for="@Model.CategoryList" />
+    <hr>
+
+    <input type="file" asp-for="@Model.PostImg">
     <hr>
 
     <div class="card card-primary card-outline card-outline-tabs">
@@ -60,19 +63,19 @@
                 </div>
                 @for (int i = 1; i < Model.PostTranslationList.Count; i++)
                 {
-                    <div class="tab-pane fade" id="custom-content-below-@Model.PostTranslationList[i].LanguageCode" aria-labelledby="@Model.PostTranslationList[i].LanguageCode">
+            <div class="tab-pane fade" id="custom-content-below-@Model.PostTranslationList[i].LanguageCode" aria-labelledby="@Model.PostTranslationList[i].LanguageCode">
 
-                        <input asp-for="@Model.PostTranslationList[i].LanguageId" type="hidden" />
-                        <input asp-for="@Model.PostTranslationList[i].LanguageCode" type="hidden" />
-                        <label asp-for="@Model.PostTranslationList[i].Title"></label><br />
-                        <input class="form-control" asp-for="@Model.PostTranslationList[i].Title" />
+                <input asp-for="@Model.PostTranslationList[i].LanguageId" type="hidden" />
+                <input asp-for="@Model.PostTranslationList[i].LanguageCode" type="hidden" />
+                <label asp-for="@Model.PostTranslationList[i].Title"></label><br />
+                <input class="form-control" asp-for="@Model.PostTranslationList[i].Title" />
 
-                        <label asp-for="@Model.PostTranslationList[i].Body"></label><br />
-                        <input class="form-control summernote" asp-for="@Model.PostTranslationList[i].Body">
+                <label asp-for="@Model.PostTranslationList[i].Body"></label><br />
+                <textarea class="form-control summernote" asp-for="@Model.PostTranslationList[i].Body"></textarea>
 
-                        <label asp-for="@Model.PostTranslationList[i].ShortDescription"></label><br />
-                        <input class="form-control" asp-for="@Model.PostTranslationList[i].ShortDescription" />
-                    </div>
+                <label asp-for="@Model.PostTranslationList[i].ShortDescription"></label><br />
+                <input class="form-control" asp-for="@Model.PostTranslationList[i].ShortDescription" />
+            </div>
                 }
             </div>
         </div>
