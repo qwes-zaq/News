@@ -28,6 +28,7 @@ namespace News.Web.UI.Areas.Admin.Controllers
             _environment = environment;
             _userManager = userManager;
         }
+
         [Route("{language?}")]
         public IActionResult Index(string language)
         {

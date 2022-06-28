@@ -14,6 +14,7 @@ namespace News.Core.Repository.Implementation.Repositories
         Post FindById(int id);
         IQueryable<Post> GetPosts();
         IQueryable<Post> GetAll(Expression<Func<Post, bool>> predicate);
+        IQueryable<Post> GetPostWithTranslations(Expression<Func<Post, bool>> predicate);
         IQueryable<Post> FindForNews(Expression<Func<Post, bool>> predicate);
         IQueryable<Post> FindForIndex(Expression<Func<Post, bool>> predicate, int count);
     }

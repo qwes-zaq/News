@@ -228,6 +228,9 @@ namespace News.Core.Domain.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhotoPath")
                         .HasColumnType("nvarchar(max)");
 

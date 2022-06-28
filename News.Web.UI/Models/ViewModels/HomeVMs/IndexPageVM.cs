@@ -11,6 +11,7 @@ namespace News.Web.UI.Models.ViewModels.HomeVMs
         public List<SliderItem> PinnedPostSlider { get; set; }
         public List<CategorySlider> Sliders { get; set; }
         public List<PostVM> MostViewedPosts { get; set; }
+        public List<PostVM>  Carousel { get; set; }
         public List<PostVM> LatestPosts { get; set; }
     }
 }

@@ -33,10 +33,10 @@ namespace News.Web.UI.Areas.Admin.Controllers
         public IActionResult Index()
         {
             List<PostVM> postVMs = new();
-            
+
             foreach (var i in _unitOfWork.Posts.GetAll(x => x.Status == (int)Core.Domain.Enums.Status.Active))
             {
-                PostTranslation postTranslation = i.PostTranslations.First(x=>x.Title!=null);
+                PostTranslation postTranslation = i.PostTranslations.First(x => x.Title != null);
                 Language language = postTranslation.Language;
                 CategoryTranslation categoryTranslation = i.Category.CategoryTranslations.First(x => x.LanguageId == language.Id);
                 postVMs.Add(new PostVM()
@@ -161,22 +161,22 @@ namespace News.Web.UI.Areas.Admin.Controllers
                     }
                 }
 
-                
+
                 //using (var transaction = _unitOfWork.Context.Database.BeginTransaction()) //?
                 //{
-                //try
-                //{
+                //    try
+                //    {
 
 
-                _unitOfWork.Posts.Add(post);
-                _unitOfWork.Complete();
-                _unitOfWork.Dispose();
+                        _unitOfWork.Posts.Add(post);
+                        _unitOfWork.Complete();
+                        _unitOfWork.Dispose();
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        transaction.Rollback();
+                //    }
                 //}
-                //catch (Exception ex)
-                //{
-                //    transaction.Rollback();
-                //}
-
 
                 return RedirectToAction(nameof(Index));
             }
@@ -198,7 +198,7 @@ namespace News.Web.UI.Areas.Admin.Controllers
         {
             Post post = _unitOfWork.Posts.FindById(id);
 
-            if (post == null || post.Status != (int)Core.Domain.Enums.Status.Active)
+            if (post == null)
             {
                 ViewData["Info"] = "There is not a such post"; //?
                 return RedirectToAction(nameof(Index));
@@ -216,7 +216,7 @@ namespace News.Web.UI.Areas.Admin.Controllers
                 CategoryId = post.CategoryId,
                 PostTranslationList = new(),
                 SelectedCategory = categoryTranslation.Title,
-                OldPostImpPath=post.PhotoPath
+                OldPostImpPath = post.PhotoPath
             };
 
             //Translations
@@ -295,7 +295,7 @@ namespace News.Web.UI.Areas.Admin.Controllers
 
                 //Tags edit
                 List<string> oldTags = new();
-                                       //post.PostTags.Select(x => x.Tag.Title).ToList();  
+                //post.PostTags.Select(x => x.Tag.Title).ToList();  
                 List<string> newTags = model.Tags?.ToLower()?.Split(", ")?.ToList();
                 List<string> tmpTags = new();
 
@@ -321,7 +321,7 @@ namespace News.Web.UI.Areas.Admin.Controllers
                 }
 
                 foreach (var i in tmpTags)
-                { 
+                {
                     newTags.Remove(i);
                     oldTags.Remove(i);
                 }
@@ -331,7 +331,7 @@ namespace News.Web.UI.Areas.Admin.Controllers
                 foreach (var i in oldTags)
                 {
                     var tmpTag = _unitOfWork.Tags.Get(x => x.Title == i);
-                    _unitOfWork.PostTags.Remove(_unitOfWork.PostTags.FindById (post.Id,tmpTag.Id));
+                    _unitOfWork.PostTags.Remove(_unitOfWork.PostTags.FindById(post.Id, tmpTag.Id));
                 }
 
                 //Adding new tags
@@ -380,21 +380,22 @@ namespace News.Web.UI.Areas.Admin.Controllers
                     }
                 }
 
+                post.Status = (int)Core.Domain.Enums.Status.Active;
 
-                //using (var transaction = _unitOfWork.Context.Database.BeginTransaction()) //?
+                //using (var transaction = _unitOfWork.Context.Database.BeginTransaction()) 
                 //{
                 //    try
                 //    {
-                _unitOfWork.Posts.Update(post);
-                _unitOfWork.Complete();
-                _unitOfWork.Dispose();
-                return RedirectToAction(nameof(Index));
+                        _unitOfWork.Posts.Update(post);
+                        _unitOfWork.Complete();
+                         _unitOfWork.Dispose();
                 //    }
                 //    catch (Exception ex)
                 //    {
                 //        transaction.Rollback();
                 //    }
                 //}
+                return RedirectToAction(nameof(Index));
             }
 
 
@@ -405,6 +406,7 @@ namespace News.Web.UI.Areas.Admin.Controllers
                     Text = x.CategoryTranslations.FirstOrDefault(x => x.Language.LanguageCode == model.LangInUrl).Title ?? x.CategoryTranslations.FirstOrDefault().Title
                 });
             return View(model);
+
         }
 
         [HttpGet]
@@ -453,13 +455,50 @@ namespace News.Web.UI.Areas.Admin.Controllers
         {
 
             Post post = _unitOfWork.Posts.FindById(id);
-            ////User
-            post.Status = (int)Core.Domain.Enums.Status.Blocked;
+            post.Status = (int)Core.Domain.Enums.Status.Banned;
             _unitOfWork.Posts.Update(post);
             _unitOfWork.Complete();
             _unitOfWork.Dispose();
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("/[area]/[controller]/[action]/{id?}/{language?}")]
+        public async Task<IActionResult> Denied(int id)
+        {
+
+            Post post = _unitOfWork.Posts.FindById(id);
+
+            post.Status = (int)Core.Domain.Enums.Status.Denied;
+            _unitOfWork.Posts.Update(post);
+            _unitOfWork.Complete();
+            _unitOfWork.Dispose();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        [Route("/[area]/[controller]/[action]/{language?}")]
+        public IActionResult Access()
+        {
+            List<PostVM> postVMs = new();
+
+            foreach (var i in _unitOfWork.Posts.GetAll(x => x.Status == (int)Core.Domain.Enums.Status.UnderConsider))
+            {
+                PostTranslation postTranslation = i.PostTranslations.First(x => x.Title != null);
+                Language language = postTranslation.Language;
+                CategoryTranslation categoryTranslation = i.Category.CategoryTranslations.First(x => x.LanguageId == language.Id);
+                postVMs.Add(new PostVM()
+                {
+                    PostId = i.Id,
+                    CategoryName = categoryTranslation.Title,
+                    PostTitle = postTranslation.Title,
+                    LanguageCode = language.LanguageCode
+                });
+            }
+            return View(postVMs);
         }
     }
 }

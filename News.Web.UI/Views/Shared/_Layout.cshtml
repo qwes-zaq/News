@@ -83,28 +83,18 @@
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto">
                         <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-item nav-link">Home</a>
-                        
+
                         @if (!User.Identity.IsAuthenticated)
                         {
                             <a class="nav-item nav-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
                         }
 
-                        @*@Html.RenderAction()*@
-                        @*@UrlHelperExtensions.Action(, "Category");*@
-
                         @await Component.InvokeAsync("CategoryList")
 
                     </div>
 
+                    @await Html.PartialAsync("_SelectLanguagePartial")
 
-                    <div class="social ml-auto">
-
-                        <a href=""><i class="fab fa-twitter"></i></a>
-                        <a href=""><i class="fab fa-facebook-f"></i></a>
-                        <a href=""><i class="fab fa-linkedin-in"></i></a>
-                        <a href=""><i class="fab fa-instagram"></i></a>
-                        <a href=""><i class="fab fa-youtube"></i></a>
-                    </div>
                     @if (User.Identity.IsAuthenticated)
                     {
                         <form method="post" asp-controller="Account" asp-action="Logout">

@@ -1,0 +1,41 @@
+﻿@model List<PostVM>
+
+<h2>Post List</h2>
+
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Language</th>
+    </tr>
+    @foreach (var i in Model)
+    {
+        <tr>
+            <td>@i.PostTitle</td>
+            <td>@i.CategoryName</td>
+            <td>@i.LanguageCode</td>
+
+            <td></td>
+            @if (i.HaveAccess)
+            {
+
+                @if (i.IsDenied)
+                {
+                    <td><i class='fas fa-ban' style='font-size: 24px; color: red'></i> </td>
+
+                }
+                else @if (i.CanEdit)
+                {
+                    <td><a asp-action="Edit" asp-route-id="@i.PostId"><i class='fas fa-pen ' style='font-size: 20px; color: forestgreen'></i></a></td>
+                }
+                else
+                {
+                    <td>
+                        <i class="fas fa-spinner fa-pulse" style='font-size: 20px; color: dimgrey'></i>
+                    </td>
+                }
+           }
+        </tr>
+    }
+</table>
+<a asp-action="Create">Create</a>

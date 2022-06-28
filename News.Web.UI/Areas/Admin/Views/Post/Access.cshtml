@@ -1,0 +1,32 @@
+﻿@model List<PostVM>
+
+<h2>Post List</h2>
+
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Language</th>
+    </tr>
+    @foreach (var i in Model)
+    {
+        <tr>
+            <td>@i.PostTitle</td>
+            <td>@i.CategoryName</td>
+            <td>@i.LanguageCode</td>
+
+            <td></td>
+
+            <td><a asp-action="Edit" asp-route-id="@i.PostId">Edit</a></td>
+            <td>
+                <form asp-area="Admin" asp-controller="Post" asp-action="Denied" method="post">
+
+
+                    <input type="hidden" name="id" value="@i.PostId" />
+                    <input type="submit" value="Denied" class="btn btn-danger" />
+
+                </form>
+            </td>
+        </tr>
+    }
+</table>

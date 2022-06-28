@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using News.Core.Domain.Models;
 using News.Core.UnitOfWork.Core;
@@ -18,44 +21,58 @@ namespace News.Web.UI.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHostingEnvironment _environment;
         private readonly UserManager<User> _userManager;
+        private readonly IStringLocalizer _localizer;
+
+
 
         public HomeController(
             ILogger<HomeController> logger, 
             IUnitOfWork unitOfWork, 
-            IHostingEnvironment environment, 
-            UserManager<User> userManager)
+            UserManager<User> userManager,
+            IStringLocalizer localizer
+            )
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
-            _environment = environment;
             _userManager = userManager;
+            _localizer = localizer;
         }
 
+        [HttpPost]
+        [Route("/[controller]/[action]")]
+        public IActionResult SetLanguage(string culture, string returnUrl)
+        {
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
 
+            return LocalRedirect(returnUrl);
+        }
         [Route("/{language?}")]
         [Route("/[controller]/[action]/{language?}")]
         public IActionResult Index(string language)
         {
-            IndexPageVM model = new() {
+            IndexPageVM model = new()
+            {
                 Sliders = new(),
                 PinnedPostSlider = new(),
                 MostViewedPosts = new(),
-                LatestPosts = new()
+                LatestPosts = new(),
+                Carousel = new()
             };
-            var tmp = _unitOfWork.Languages.GetAll();
 
-            Language currentLanguage = language != null ?
-                tmp.FirstOrDefault(x => x.LanguageCode.ToLower() == language.ToLower()) ?? tmp.First()
-                : tmp.First();
+            Language currentLanguage = _unitOfWork.Languages.FindByCodeOrDefault(language);
 
             //Category sliders
             var allCategories = _unitOfWork.Categories.GetFullAllCategories();
 
             foreach (var i in allCategories)
             {
-                CategorySlider currentCategorySlider = new() {
+                CategorySlider currentCategorySlider = new()
+                {
                     Items = new(),
                     CategoryName = i.CategoryTranslations.FirstOrDefault(x => x.LanguageId == currentLanguage.Id)?.Title
                 };
@@ -64,12 +81,13 @@ namespace News.Web.UI.Controllers
                     foreach (var j in i.Posts)
                     {
                         var currentPostTranslation = j.PostTranslations.FirstOrDefault(x => x.LanguageId == currentLanguage.Id);
-                        if(currentPostTranslation!=null)
+                        if (_localizer["Post", j.Id] != "")
                         {
-                            SliderItem sliderItem = new(){ 
-                                PostId=j.Id,
-                                PostPhotoPath= j.PhotoPath ?? "/ui/img/news-450x350-2.jpg",
-                                PostTitle=currentPostTranslation.Title
+                            SliderItem sliderItem = new()
+                            {
+                                PostId = j.Id,
+                                PostPhotoPath = j.PhotoPath ?? "/ui/img/news-450x350-2.jpg",
+                                PostTitle = _localizer["Post", j.Id]
                             };
                             currentCategorySlider.Items.Add(sliderItem);
                         }
@@ -80,14 +98,14 @@ namespace News.Web.UI.Controllers
                     {
                         model.Sliders.Add(currentCategorySlider);
                     }
-                
+
                 }
-            
+
             }
 
             //Pinned post slider
             var pinnedPosts = _unitOfWork.PinnedPosts.GetAllPostsWithTranslations();
-            foreach(var i in pinnedPosts)
+            foreach (var i in pinnedPosts)
             {
                 var postTitle = i.PostTranslations.FirstOrDefault(x => x.LanguageId == currentLanguage.Id).Title;
                 var categoryTitle = i.Category.CategoryTranslations.FirstOrDefault(x => x.LanguageId == currentLanguage.Id).Title;
@@ -97,7 +115,7 @@ namespace News.Web.UI.Controllers
                     {
                         PostId = i.Id,
                         PostTitle = postTitle,
-                        PostPhotoPath= i.PhotoPath ?? "/ui/img/news-450x350-2.jpg"
+                        PostPhotoPath = i.PhotoPath ?? "/ui/img/news-450x350-2.jpg"
                     });
 
             }
@@ -105,7 +123,7 @@ namespace News.Web.UI.Controllers
             // Most Viewed Posts
             var postTranslations = _unitOfWork
                 .PostTranslations
-                .GetPostTranlations(x => x.LanguageId == currentLanguage.Id && x.Title!=null);
+                .GetPostTranlations(x => x.LanguageId == currentLanguage.Id && x.Title != null);
 
             foreach (var i in postTranslations.OrderBy(x => x.ViewCount).Reverse())
             {
@@ -144,6 +162,33 @@ namespace News.Web.UI.Controllers
                     break;
                 }
             }
+
+            //Carousel
+
+            var carousel = _unitOfWork
+                .Posts
+                .GetPostWithTranslations(x => x.OrderIndex > 0)
+                .OrderBy(x => x.OrderIndex)
+                .ToList();
+
+            for (int i = 0; i < carousel.Count; i++)
+            {
+                var currentPostTranslation = carousel[i].PostTranslations.FirstOrDefault(x => x.LanguageId == currentLanguage.Id);
+                if (currentPostTranslation.Title != null)
+                {
+                    model.Carousel.Add(new()
+                    {
+                        PhotoPath = carousel[i].PhotoPath,
+                        PostId = carousel[i].Id,
+                        PostTitle = currentPostTranslation.Title
+                    });
+                }
+                if (model.Carousel.Count == 4)
+                {
+                    break;
+                }
+            }
+
 
             return View(model);
         }

@@ -3,15 +3,14 @@
 <div class="top-news">
     <div class="container">
         <div class="row">
-            <div class="col-md-10 m-md-auto">
+            <div class="col-md-6 tn-left">
                 <div class="row tn-slider">
-
                     @foreach (var i in Model.PinnedPostSlider)
                     {
                         <div class="col-md-6">
                             <div class="tn-img">
                                 <a asp-controller="Post" asp-action="Read" asp-route-id="@i.PostId">
-                                    <img src="@i.PostPhotoPath" height="500" />
+                                    <img src="@i.PostPhotoPath" height="340" />
                                     <div class="tn-title">
                                         @i.PostTitle
 
@@ -21,23 +20,33 @@
                         </div>
 
                     }
-                    @for (int i = Model.PinnedPostSlider.Count(); i < 2; i++)
+                </div>
+            </div>
+            <div class="col-md-6 tn-right">
+                <div class="row">
+                    @foreach (var i in Model.Carousel)
                     {
                         <div class="col-md-6">
                             <div class="tn-img">
-                                <img src="~/ui/img/news-450x350-2.jpg" />
-                                <div class="tn-title">
-                                    <a href="">Integer hendrerit elit eget purus sodales maximus</a>
-                                </div>
+                                <a asp-controller="Post" asp-action="Read" asp-route-id="@i.PostId">
+                                    <img src="@i.PhotoPath" height="170" />
+                                    <div class="tn-title">
+                                        @i.PostTitle
+
+                                    </div>
+                                </a>
                             </div>
                         </div>
-                    }
 
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<br>
+<br>
 
 
 <hr class="p-1">

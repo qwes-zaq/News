@@ -9,7 +9,8 @@ namespace News.Core.Domain.Enums
     public enum Status
     {
         Active=1,
-        Baned=2,
-        Blocked=3, //locked for a while
+        Banned=2,
+        Denied=3, 
+        UnderConsider=4,
     }
 }

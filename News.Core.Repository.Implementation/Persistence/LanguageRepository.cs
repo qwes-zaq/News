@@ -23,6 +23,17 @@ namespace News.Core.Repository.Implementation.Persistence
         public NewsDbContext NewsDbContext => _db as NewsDbContext;
 
         public int AllCount() => _dbSet.Count();
+
+        public Language FindByCodeOrDefault(string code)
+        {
+            if (code == null)
+            {
+                return _dbSet.First();
+            }
+            code = code?.ToLower();
+            return _dbSet.FirstOrDefault(x => x.LanguageCode.ToLower() == code.ToLower()) ?? _dbSet.First();
+        }
+
         public Language FindById(int id) => _dbSet.Include(x => x.PostTranslations).Include(x => x.CategoryTranslations).FirstOrDefault(x => x.Id == id);
         public IQueryable<Language> FindForNews(Expression<Func<Language, bool>> predicate) => _dbSet.Include(x => x.PostTranslations).Where(predicate);
     }

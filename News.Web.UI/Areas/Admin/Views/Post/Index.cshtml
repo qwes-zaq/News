@@ -17,8 +17,10 @@
 
             <td></td>
 
-            <td><a asp-action="Edit" asp-route-id="@i.PostId">Edit</a></td>
+            <td><a asp-action="Edit" asp-route-id="@i.PostId"><i class='fas fa-pencil-alt' style='font-size:24px'></i></a></td>
         </tr>
     }
 </table>
-<a asp-action="Create">Create</a>
+<a asp-action="Create">
+    <i class='fas fa-plus' style='font-size:36px'></i>
+</a>

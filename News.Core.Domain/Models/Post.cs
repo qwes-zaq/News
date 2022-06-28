@@ -11,6 +11,7 @@ namespace News.Core.Domain.Models
             PostTags = new HashSet<PostTag>();
         }
         public int Id { get; set; }
+        public int OrderIndex { get; set; }
         public DateTime AddedDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public DateTime EndDate { get; set; }

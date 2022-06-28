@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Moderator\Data\" />
     <Folder Include="wwwroot\uploadedFiles\" />
   </ItemGroup>
 

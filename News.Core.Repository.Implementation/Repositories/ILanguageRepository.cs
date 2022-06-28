@@ -12,7 +12,7 @@ namespace News.Core.Repository.Implementation.Repositories
     public interface ILanguageRepository: IRepository<Language>
     {
         Language FindById(int id);
-
+        Language FindByCodeOrDefault(string code);
         int AllCount();
         IQueryable<Language> FindForNews(Expression<Func<Language, bool>> predicate);
     }

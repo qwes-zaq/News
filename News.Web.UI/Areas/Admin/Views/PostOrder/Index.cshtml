@@ -1,0 +1,21 @@
+﻿@model List<PostOrderVM>
+
+
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Language</th>
+        <th>OrderIndex</th>
+    </tr>
+    @foreach (var i in Model)
+    {
+        <tr>
+            <td>@i.PostTitle</td>
+            <td>@i.CategoryName</td>
+            <td>@i.LanguageCode</td>
+
+            <td>@i.PostOrderIndex</td>
+        </tr>
+    }
+</table>

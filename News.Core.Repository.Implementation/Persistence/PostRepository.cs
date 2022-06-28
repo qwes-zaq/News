@@ -47,6 +47,14 @@ namespace News.Core.Repository.Implementation.Persistence
                     .ThenInclude(x=>x.Tag)
                 .FirstOrDefault(x => x.Id == id);
 
+        public IQueryable<Post> GetPostWithTranslations(Expression<Func<Post, bool>> predicate)
+        {
+            return _dbSet
+                .Include(x => x.PostTranslations)
+                .ThenInclude(x => x.Language)
+                .Where(predicate);
+        }
+
         public IQueryable<Post> FindForIndex(Expression<Func<Post, bool>> predicate, int count) => _dbSet.Where(predicate).Take(count);
 
         public IQueryable<Post> FindForNews(Expression<Func<Post, bool>> predicate)

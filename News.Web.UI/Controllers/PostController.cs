@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using News.Web.UI.Models.ViewModels.PostVMs;
 using System.Globalization;
+using News.Web.UI.Localization.Interface;
 
 namespace News.Web.UI.Controllers
 {
@@ -17,13 +18,15 @@ namespace News.Web.UI.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHostingEnvironment _environment;
         private readonly UserManager<User> _userManager;
+        private readonly ILocalizer _localizer;
 
 
-        public PostController(IUnitOfWork unitOfWork, IHostingEnvironment environment, UserManager<User> userManager)
+        public PostController(IUnitOfWork unitOfWork, IHostingEnvironment environment, UserManager<User> userManager, ILocalizer localizer)
         {
             _unitOfWork = unitOfWork;
             _environment = environment;
             _userManager = userManager;
+            _localizer = localizer;
         }
 
 
@@ -43,7 +46,7 @@ namespace News.Web.UI.Controllers
 
             if (categoryWithPosts == null || categoryWithPosts.Status != (int)Core.Domain.Enums.Status.Active)
             {
-                return RedirectToAction("Index", "Home", new { @language = language });
+                return RedirectToAction("Index", "Home", new { language });
             }
 
             foreach (var i in categoryWithPosts.Posts)
@@ -54,11 +57,8 @@ namespace News.Web.UI.Controllers
                     {
                         PostId = i.Id,
                         PostTitle = i.PostTranslations.FirstOrDefault(x => x.LanguageId == currentLanguage.Id).Title,
-                        //PostBody= i.PostTranslations.FirstOrDefault(x => x.LanguageId == currentLanguage.Id).Body,
                         PhotoPath = i.PhotoPath ?? "/ui/img/news-450x350-2.jpg"
-
                     });
-
                 }
             }
 
@@ -74,24 +74,16 @@ namespace News.Web.UI.Controllers
 
             if (currentPost == null || currentPost.Status != (int)Core.Domain.Enums.Status.Active)
             {
-                return RedirectToAction("Index", "Home", new { @language = language });
+                return RedirectToAction("Index", "Home", new { language });
             }
 
-            var tmp = _unitOfWork.Languages.GetAll();
-
-            Language currentLanguage = language != null ?
-                tmp.FirstOrDefault(x => x.LanguageCode.ToLower() == language.ToLower()) ?? tmp.First()
-                : tmp.First();
-
             Category currentCategory = _unitOfWork.Categories.FindById(currentPost.CategoryId);
-            
-            PostTranslation currentPostTranslation = currentPost
-               .PostTranslations
-               .FirstOrDefault(x => x.LanguageId == currentLanguage.Id);
+
+            PostTranslation currentPostTranslation = _localizer.CurrentPostTranslation(currentPost.Id);
 
             if (currentPostTranslation == null)
             {
-                return RedirectToAction("Index", "Home", new { @language = language });
+                return RedirectToAction("Index", "Home", new { language });
             }
 
             PostReadVM postReadVM = new()
@@ -119,25 +111,31 @@ namespace News.Web.UI.Controllers
                 .Where(x => x.Status == (int)Core.Domain.Enums.Status.Active)
                 .OrderBy(x => x.AddedDate)
                 .Reverse()
-                .Take(6)
                 .ToList();
 
             if (!list.Remove(currentPost))
             {
-                list.Remove(list.First());
+                list.Remove(currentPost);
             }
 
             foreach (var i in list)
             {
-                postReadVM.PostList.Add(new()
+                var postTranslation = _localizer.CurrentPostTranslation(i.Id);
+                if (postTranslation != null && postTranslation.Title != null)
                 {
-                    PostId = i.Id,
-                    PostTitle = i.PostTranslations.FirstOrDefault(x => x.LanguageId == currentLanguage.Id).Title,
-                    PhotoPath = i.PhotoPath ?? "/ui/img/news-450x350-2.jpg",
+                    postReadVM.PostList.Add(new()
+                    {
+                        PostId = i.Id,
+                        PostTitle = postTranslation.Title,
+                        PhotoPath = i.PhotoPath ?? "/ui/img/news-450x350-2.jpg",
 
-                });
+                    });
+                }
+                if (postReadVM.PostList.Count > 4)
+                {
+                    break;
+                }
             }
-
 
             currentPostTranslation.ViewCount++;
             _unitOfWork.PostTranslations.Update(currentPostTranslation);

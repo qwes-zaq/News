@@ -1,0 +1,36 @@
+﻿@model PostOrderCreateVM
+
+<br>
+<h2>Post Ordering</h2>
+<br>
+<br>
+
+<form asp-action="Create" enctype="multipart/form-data" method="post">
+
+    <label asp-for="@Model.PostList1"></label><br>
+    <select asp-for="@Model.PostId1" asp-items="@Model.PostList1"></select>
+    <input class="form-control" type="hidden" asp-for="@Model.PostId1" />
+    <hr>
+
+    <label asp-for="@Model.PostList2"></label><br>
+    <select asp-for="@Model.PostId2" asp-items="@Model.PostList2"></select>
+    <input class="form-control" type="hidden" asp-for="@Model.PostId2" />
+    <hr>
+
+    <label asp-for="@Model.PostList3"></label><br>
+    <select asp-for="@Model.PostId3" asp-items="@Model.PostList3"></select>
+    <input class="form-control" type="hidden" asp-for="@Model.PostId3" />
+    <hr>
+
+    <label asp-for="@Model.PostList4"></label><br>
+    <select asp-for="@Model.PostId4" asp-items="@Model.PostList4"></select>
+    <input class="form-control" type="hidden" asp-for="@Model.PostId4" />
+    <hr>
+
+    <label asp-for="@Model.PostList5"></label><br>
+    <select asp-for="@Model.PostId5" asp-items="@Model.PostList5"></select>
+    <input class="form-control" type="hidden" asp-for="@Model.PostId5" />
+    <hr>
+
+    <input type="submit" value="Create" class="btn btn-primary" />
+</form>
